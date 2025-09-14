@@ -110,6 +110,11 @@ CREATE TABLE fato_motos_status (
 -- ============================================================
 -- SEQUENCES
 -- ============================================================
+DROP SEQUENCE seq_registro_status;
+DROP SEQUENCE seq_localidade;
+DROP SEQUENCE auditoria_seq;
+
+
 CREATE SEQUENCE seq_registro_status START WITH 6 INCREMENT BY 1;
 CREATE SEQUENCE seq_localidade START WITH 6 INCREMENT BY 1;
 CREATE SEQUENCE auditoria_seq START WITH 1 INCREMENT BY 1;
@@ -188,6 +193,8 @@ SELECT * FROM fato_motos_status;
 -- ============================================================
 -- PROCEDURE 1 - JSON Funcionario + Motos
 -- ============================================================
+DROP PROCEDURE relatorio_funcionario_moto_status;
+
 CREATE OR REPLACE PROCEDURE relatorio_funcionario_moto_status(p_id_funcionario IN NUMBER)
 IS
     v_json CLOB;
@@ -225,6 +232,8 @@ END;
 -- ============================================================
 -- PROCEDURE 2 - Soma por patio/status
 -- ============================================================
+DROP PROCEDURE soma_fato_motos;
+
 CREATE OR REPLACE PROCEDURE soma_fato_motos
 IS
     CURSOR c_fato IS
@@ -269,6 +278,8 @@ END;
 -- ============================================================
 -- FUNÇÃO 1 - Moto para JSON
 -- ============================================================
+DROP FUNCTION moto_to_json;
+
 CREATE OR REPLACE FUNCTION moto_to_json(p_id_moto IN NUMBER) RETURN CLOB
 IS
     v_json CLOB;
@@ -299,6 +310,8 @@ END;
 -- ============================================================
 -- FUNÇÃO 2 - Validar senha do funcionario
 -- ============================================================
+DROP FUNCTION validar_senha;
+
 CREATE OR REPLACE FUNCTION validar_senha(p_id_funcionario IN NUMBER, p_senha IN VARCHAR2) RETURN VARCHAR2
 IS
     v_senha VARCHAR2(255);
@@ -322,6 +335,8 @@ END;
 -- ============================================================
 -- TRIGGER DE AUDITORIA PARA MOTO
 -- ============================================================
+DROP TRIGGER auditoria_moto;
+
 CREATE OR REPLACE TRIGGER auditoria_moto
 AFTER INSERT OR UPDATE OR DELETE ON moto
 FOR EACH ROW
