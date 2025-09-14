@@ -183,7 +183,7 @@ SELECT * FROM camera;
 SELECT * FROM localidade;
 SELECT * FROM registro_status;
 SELECT * FROM auditoria;
-SELECT * FROM fato_motos_status
+SELECT * FROM fato_motos_status;
 
 -- ============================================================
 -- PROCEDURE 1 - JSON Funcionario + Motos
