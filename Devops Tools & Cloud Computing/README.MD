@@ -316,10 +316,3 @@ curl -X GET http://mottuflow-app-dns-554874.brazilsouth.azurecontainer.io:8080/a
 | **Leo Mota Lima** | 557851 | 2TDSB-2025 |
 
 </div>
-
----
-
-<div align="center">
-  <p><strong>MottuFlow</strong> - Sistema inteligente para gestão de frotas de motocicletas</p>
-  <p>Desenvolvido com ❤️ pela equipe 2TDSB-2025</p>
-</div>
