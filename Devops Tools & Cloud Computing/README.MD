@@ -286,7 +286,7 @@ curl -X GET http://mottuflow-app-dns-554874.brazilsouth.azurecontainer.io:8080/a
 ✅ Container MySQL criado
 ✅ Container da aplicação criado
 ✅ DNS configurado
-🚀 App acessível em: [URL]
+🚀 App acessível em: http://mottuflow-app-dns-554874.brazilsouth.azurecontainer.io:8080/api
 ```
 
 ### limpar.sh
