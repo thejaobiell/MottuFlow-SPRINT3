@@ -341,24 +341,42 @@ CREATE OR REPLACE TRIGGER auditoria_moto
 AFTER INSERT OR UPDATE OR DELETE ON moto
 FOR EACH ROW
 DECLARE
+    v_tipo_operacao     VARCHAR2(10);
+    v_valores_anteriores VARCHAR2(4000);
+    v_valores_novos      VARCHAR2(4000);
 BEGIN
-    INSERT INTO auditoria (id_auditoria, nome_usuario, tipo_operacao, data_hora, valores_anteriores, valores_novos)
-    VALUES (auditoria_seq.NEXTVAL,
-            USER,
-            CASE 
-                WHEN INSERTING THEN 'INSERT'
-                WHEN UPDATING THEN 'UPDATE'
-                WHEN DELETING THEN 'DELETE'
-            END,
-            SYSTIMESTAMP,
-            CASE 
-                WHEN INSERTING THEN NULL
-                ELSE :OLD.placa
-            END,
-            CASE 
-                WHEN DELETING THEN NULL
-                ELSE :NEW.placa
-            END
-           );
+    -- Define o tipo de operação
+    IF INSERTING THEN
+        v_tipo_operacao := 'INSERT';
+        v_valores_anteriores := NULL;
+        v_valores_novos := :NEW.placa;
+    ELSIF UPDATING THEN
+        v_tipo_operacao := 'UPDATE';
+        v_valores_anteriores := :OLD.placa;
+        v_valores_novos := :NEW.placa;
+    ELSIF DELETING THEN
+        v_tipo_operacao := 'DELETE';
+        v_valores_anteriores := :OLD.placa;
+        v_valores_novos := NULL;
+    END IF;
+
+    -- Faz o insert na tabela de auditoria
+    INSERT INTO auditoria (
+        id_auditoria,
+        nome_usuario,
+        tipo_operacao,
+        data_hora,
+        valores_anteriores,
+        valores_novos
+    )
+    VALUES (
+        auditoria_seq.NEXTVAL,
+        USER,
+        v_tipo_operacao,
+        SYSTIMESTAMP,
+        v_valores_anteriores,
+        v_valores_novos
+    );
 END;
 /
+
