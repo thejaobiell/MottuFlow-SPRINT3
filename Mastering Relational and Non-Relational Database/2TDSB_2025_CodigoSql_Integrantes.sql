@@ -345,7 +345,6 @@ DECLARE
     v_valores_anteriores VARCHAR2(4000);
     v_valores_novos      VARCHAR2(4000);
 BEGIN
-    -- Define o tipo de operação
     IF INSERTING THEN
         v_tipo_operacao := 'INSERT';
         v_valores_anteriores := NULL;
@@ -360,7 +359,6 @@ BEGIN
         v_valores_novos := NULL;
     END IF;
 
-    -- Faz o insert na tabela de auditoria
     INSERT INTO auditoria (
         id_auditoria,
         nome_usuario,
