@@ -18,7 +18,6 @@ DROP TABLE registro_status CASCADE CONSTRAINTS;
 DROP TABLE auditoria CASCADE CONSTRAINTS;
 DROP TABLE fato_motos_status CASCADE CONSTRAINTS;
 
-
 -- ============================================================
 -- CRIAÇÃO DAS TABELAS
 -- ============================================================
@@ -107,13 +106,12 @@ CREATE TABLE fato_motos_status (
     quantidade NUMBER
 );
 
-
 -- ============================================================
 -- SEQUENCES
 -- ============================================================
-DROP SEQUENCE seq_registro_status
-DROP SEQUENCE seq_localidade
-DROP SEQUENCE auditoria_seq
+DROP SEQUENCE seq_registro_status;
+DROP SEQUENCE seq_localidade;
+DROP SEQUENCE auditoria_seq;
 
 CREATE SEQUENCE seq_registro_status START WITH 6 INCREMENT BY 1;
 CREATE SEQUENCE seq_localidade START WITH 6 INCREMENT BY 1;
@@ -122,48 +120,56 @@ CREATE SEQUENCE auditoria_seq START WITH 1 INCREMENT BY 1;
 -- ============================================================
 -- INSERTS
 -- ============================================================
+-- Funcionarios
 INSERT INTO funcionario VALUES (1, 'Joao Silva',  '12345678900', 'Gerente', '11999990001', 'joao.silva@email.com', 'senha123', NULL, NULL);
 INSERT INTO funcionario VALUES (2, 'Maria Souza', '22345678900', 'Tecnico', '11999990002', 'maria.souza@email.com', 'senha123', NULL, NULL);
 INSERT INTO funcionario VALUES (3, 'Carlos Lima', '32345678900', 'Analista', '11999990003', 'carlos.lima@email.com', 'senha123', NULL, NULL);
 INSERT INTO funcionario VALUES (4, 'Ana Costa', '42345678900', 'Supervisor', '11999990004', 'ana.costa@email.com', 'senha123', NULL, NULL);
 INSERT INTO funcionario VALUES (5, 'Pedro Rocha', '52345678900', 'Motorista', '11999990005', 'pedro.rocha@email.com', 'senha123', NULL, NULL);
 
+-- Patios
 INSERT INTO patio VALUES (1, 'Patio Central', 'Rua A 123', 50);
 INSERT INTO patio VALUES (2, 'Patio Norte', 'Rua B 456', 30);
 INSERT INTO patio VALUES (3, 'Patio Sul', 'Rua C 789', 40);
 INSERT INTO patio VALUES (4, 'Patio Leste', 'Rua D 321', 20);
 INSERT INTO patio VALUES (5, 'Patio Oeste', 'Rua E 654', 25);
 
+-- Motos
 INSERT INTO moto VALUES (1, 'ABC1234', 'CG150', 'Honda', 2020, 1, 'Rua A');
 INSERT INTO moto VALUES (2, 'DEF5678', 'Biz110', 'Honda', 2021, 2, 'Rua B');
 INSERT INTO moto VALUES (3, 'GHI9012', 'XRE300', 'Honda', 2019, 3, 'Rua C');
 INSERT INTO moto VALUES (4, 'JKL3456', 'PCX150', 'Honda', 2022, 4, 'Rua D');
 INSERT INTO moto VALUES (5, 'MNO7890', 'Fazer250', 'Yamaha', 2023, 5, 'Rua E');
 
+-- Cameras
 INSERT INTO camera VALUES (1, 'Operacional', 'Entrada Patio Central', 1);
 INSERT INTO camera VALUES (2, 'Manutencao', 'Saida Patio Norte', 2);
 INSERT INTO camera VALUES (3, 'Operacional', 'Corredor Patio Sul', 3);
 INSERT INTO camera VALUES (4, 'Inoperante', 'Portao Patio Leste', 4);
 INSERT INTO camera VALUES (5, 'Operacional', 'Garagem Patio Oeste', 5);
 
+-- Aruco Tags
 INSERT INTO aruco_tag VALUES (1, 'TAG001', 'Ativo', 1);
 INSERT INTO aruco_tag VALUES (2, 'TAG002', 'Ativo', 2);
 INSERT INTO aruco_tag VALUES (3, 'TAG003', 'Inativo', 3);
 INSERT INTO aruco_tag VALUES (4, 'TAG004', 'Ativo', 4);
 INSERT INTO aruco_tag VALUES (5, 'TAG005', 'Manutencao', 5);
 
+-- Localidades
 INSERT INTO localidade VALUES (1, TIMESTAMP '2025-05-16 08:00:00', 'Portao A', 1, 1, 1);
 INSERT INTO localidade VALUES (2, TIMESTAMP '2025-05-16 08:10:00', 'Portao B', 2, 2, 2);
 INSERT INTO localidade VALUES (3, TIMESTAMP '2025-05-16 08:20:00', 'Portao C', 3, 3, 3);
 INSERT INTO localidade VALUES (4, TIMESTAMP '2025-05-16 08:30:00', 'Portao D', 4, 4, 4);
 INSERT INTO localidade VALUES (5, TIMESTAMP '2025-05-16 08:40:00', 'Portao E', 5, 5, 5);
 
+-- Registro de Status
 INSERT INTO registro_status VALUES (1, 'Disponivel', 'Moto pronta para uso.', TIMESTAMP '2025-05-16 08:00:00', 1, 1);
 INSERT INTO registro_status VALUES (2, 'Inativo', 'Aguardando documentacao.', TIMESTAMP '2025-05-16 08:10:00', 2, 3);
 INSERT INTO registro_status VALUES (3, 'Manutencao', 'Revisao geral.', TIMESTAMP '2025-05-16 08:20:00', 3, 2);
 INSERT INTO registro_status VALUES (4, 'Reservado', 'Reservada via app.', TIMESTAMP '2025-05-16 08:30:00', 4, 4);
 INSERT INTO registro_status VALUES (5, 'Baixa', 'Moto furtada.', TIMESTAMP '2025-05-16 08:40:00', 5, 1);
 
+-- Fato Motos Status
 INSERT INTO fato_motos_status VALUES (1, 'Disponivel', 10);
 INSERT INTO fato_motos_status VALUES (1, 'Manutencao', 5);
 INSERT INTO fato_motos_status VALUES (2, 'Disponivel', 8);
@@ -178,23 +184,9 @@ INSERT INTO fato_motos_status VALUES (5, 'Disponivel', 9);
 COMMIT;
 
 -- ============================================================
--- CONSULTAS PARA VERIFICAR O CONTEÚDO DAS TABELAS
--- ============================================================
-SELECT * FROM funcionario;
-SELECT * FROM patio;
-SELECT * FROM moto;
-SELECT * FROM aruco_tag;
-SELECT * FROM camera;
-SELECT * FROM localidade;
-SELECT * FROM registro_status;
-SELECT * FROM auditoria;
-SELECT * FROM fato_motos_status
-
--- ============================================================
 -- PROCEDURE 1 - JSON Funcionario + Motos
 -- ============================================================
-
-DROP PROCEDURE relatorio_funcionario_moto_status
+DROP PROCEDURE relatorio_funcionario_moto_status;
 
 CREATE OR REPLACE PROCEDURE relatorio_funcionario_moto_status(p_id_funcionario IN NUMBER)
 IS
@@ -233,8 +225,7 @@ END;
 -- ============================================================
 -- PROCEDURE 2 - Soma por patio/status
 -- ============================================================
-
-DROP PROCEDURE soma_fato_motos
+DROP PROCEDURE soma_fato_motos;
 
 CREATE OR REPLACE PROCEDURE soma_fato_motos
 IS
@@ -280,7 +271,7 @@ END;
 -- ============================================================
 -- FUNÇÃO 1 - Moto para JSON
 -- ============================================================
-DROP FUNCTION moto_to_json
+DROP FUNCTION moto_to_json;
 
 CREATE OR REPLACE FUNCTION moto_to_json(p_id_moto IN NUMBER) RETURN CLOB
 IS
@@ -312,8 +303,7 @@ END;
 -- ============================================================
 -- FUNÇÃO 2 - Validar senha do funcionario
 -- ============================================================
-
-DROP FUNCTION validar_senha
+DROP FUNCTION validar_senha;
 
 CREATE OR REPLACE FUNCTION validar_senha(p_id_funcionario IN NUMBER, p_senha IN VARCHAR2) RETURN VARCHAR2
 IS
@@ -338,8 +328,7 @@ END;
 -- ============================================================
 -- TRIGGER DE AUDITORIA PARA MOTO
 -- ============================================================
-
-DROP TRIGGER auditoria_moto
+DROP TRIGGER auditoria_moto;
 
 CREATE OR REPLACE TRIGGER auditoria_moto
 AFTER INSERT OR UPDATE OR DELETE ON moto
