@@ -14,7 +14,6 @@
 
 O MottuFlow foi desenvolvido como parte de um projeto acadêmico integrando as disciplinas de **Internet of Things (IoT)** e **Mobile Application Development**. A solução oferece:
 
-
 - **📱 Arquitetura Híbrida**: API REST para integração mobile + Interface web Thymeleaf
 - **🔒 Segurança Robusta**: Autenticação JWT e Spring Security
 - **📊 Gestão Completa**: Controle de funcionários, frotas, pátios e status em tempo real
@@ -34,7 +33,7 @@ O MottuFlow foi desenvolvido como parte de um projeto acadêmico integrando as d
 
 | Módulo | Descrição | Funcionalidades |
 |--------|-----------|-----------------|
-| **👥 Funcionários** | Gestão de recursos humanos | CRUD completo, perfis de acesso, histórico |
+| **👥 Funcionários** | Gestão de Funcionários | CRUD completo, perfis de acesso, histórico |
 | **🏪 Pátios** | Gerenciamento de locais | Cadastro, monitoramento, capacidade |
 | **🏍️ Motos** | Controle de frota | Registro, status, localização, manutenção |
 | **📹 Câmeras** | Sistema de monitoramento | Configuração e status |
@@ -65,7 +64,6 @@ O MottuFlow foi desenvolvido como parte de um projeto acadêmico integrando as d
 
 ### Frontend & Templates
 - **Thymeleaf** - Engine de templates
-
 
 ## 🏗️ Arquitetura
 
@@ -336,234 +334,561 @@ Todas as requisições para a **API MottuFlow** exigem autenticação via **JWT 
 
 ---
 
-### ✅ Usando o Terminal (cURL)
+## 📡 API REST - Documentação Completa
 
-1. **Login para obter o token:**
+### 🔧 Configuração Base
+- **Autenticação:** Bearer Token (JWT)
+- **Content-Type:** `application/json`
 
-   ```bash
-   curl -X POST http://localhost:8080/api/login \
-     -H "Content-Type: application/json" \
-     -d '{"email": "admin@email.com", "senha": "adminmottu"}'
-   ```
-
-   **Resposta esperada:**
-
-   ```json
-   {
-     "tokenAcesso": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
-   }
-   ```
-
-2. **Use o token nas chamadas protegidas:**
-
-   ```bash
-   curl -X GET http://localhost:8080/api/funcionario/listar \
-     -H "Authorization: Bearer SEU_TOKEN_AQUI"
-   ```
+### Variáveis de Ambiente
+- `{{baseUrl}}`: http://localhost:8080/api
+- `{{jwt}}`: Token JWT obtido no login
 
 ---
 
-👉 Dica: sempre prefixe o token com **`Bearer `** no cabeçalho `Authorization`.
+## 🔐 Autenticação (JWT)
 
-## 📡 API REST
+### Login
+```http
+POST /login
+Content-Type: application/json
 
-### 🛣️ Principais Endpoints
-
-<details>
-<summary><b>👥 Funcionários</b></summary>
-
-```bash
-# Listar funcionários
-GET /funcionario/listar
-
-# Buscar por ID
-GET /funcionario/buscar-por-id/{id}
-
-# Buscar por CPF
-GET /funcionario/buscar-por-cpf/{cpf}
-
-# Criar funcionário
-POST /funcionario/cadastrar
 {
-  "nome": "João Silva",
-  "cpf": "123.456.789-00",
-  "cargo": "OPERADOR",
-  "telefone": "(11) 99999-9999",
-  "email": "joao@mottuflow.com",
+  "email": "admin@email.com",
+  "senha": "adminmottu"
+}
+```
+
+### Atualizar Token
+```http
+POST /atualizar-token
+Content-Type: application/json
+
+{
+  "refreshToken": "seu_refresh_token_aqui"
+}
+```
+
+### Verificar Token
+```http
+POST /verificar-jwt
+Content-Type: application/json
+
+{
+  "tokenAcesso": "seu_token_jwt_aqui"
+}
+```
+
+---
+
+## 👥 Funcionários
+
+### Listar Funcionários
+```http
+GET /funcionario/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /funcionario/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por CPF
+```http
+GET /funcionario/buscar-por-cpf/{cpf}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/funcionario/buscar-por-cpf/000.000.000-00`
+
+### Criar Funcionário
+```http
+POST /funcionario/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "nome": "Novo Funcionário",
+  "cpf": "333.333.333-33",
+  "cargo": "MECANICO",
+  "telefone": "(33) 33333-3333",
+  "email": "novo@email.com",
   "senha": "senha123"
 }
+```
 
-# Atualizar funcionário
+### Atualizar Funcionário
+```http
 PUT /funcionario/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
 
-# Deletar funcionário
+{
+  "id": 2,
+  "nome": "João Mecânico Atualizado",
+  "cpf": "111.111.111-11",
+  "cargo": "MECANICO",
+  "telefone": "(11) 11111-1111",
+  "email": "joao@email.com",
+  "senha": "novaSenha123"
+}
+```
+
+### Alterar Senha
+```http
+PATCH /funcionario/alterar-senha
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "senhaAtual": "adminmottu",
+  "novaSenha": "mottuadmin"
+}
+```
+
+### Deletar Funcionário
+```http
 DELETE /funcionario/deletar/{id}
+Authorization: Bearer {jwt_token}
 ```
-
-</details>
-
-<details>
-<summary><b>🏢 Pátios</b></summary>
-
-```bash
-# Listar pátios
-GET /patios/listar
-
-# Buscar por ID
-GET /patios/buscar-por-id/{id}
-
-# Criar pátio
-POST /patios/cadastrar
-
-# Atualizar pátio
-PUT /patios/editar/{id}
-
-# Deletar pátio
-DELETE /patios/deletar/{id}
-```
-
-</details>
-
-<details>
-<summary><b>🏍️ Motos</b></summary>
-
-```bash
-# Listar motos
-GET /motos/listar
-
-# Buscar por ID
-GET /motos/buscar-por-id/{id}
-
-# Buscar por Fabricante
-GET /motos/buscar-por-fabricante?fabricante=Yamaha
-
-# Buscar por Pátio
-GET /motos/buscar-por-patio/{idPatio}
-
-# Criar moto
-POST /motos/cadastrar
-
-# Atualizar moto
-PUT /motos/editar/{id}
-
-# Deletar moto
-DELETE /motos/deletar/{id}
-```
-
-</details>
-
-<details>
-<summary><b>📹 Câmeras</b></summary>
-
-```bash
-# Listar câmeras
-GET /cameras/listar
-
-# Buscar por ID
-GET /cameras/buscar-por-id/{id}
-
-# Buscar por Status
-GET /cameras/buscar-por-status/{status}
-
-# Criar câmera
-POST /cameras/cadastrar
-
-# Atualizar câmera
-PUT /cameras/editar/{id}
-
-# Deletar câmera
-DELETE /cameras/deletar/{id}
-```
-
-</details>
-
-<details>
-<summary><b>🏷️ ArucoTags</b></summary>
-
-```bash
-# Listar tags
-GET /aruco-tags/listar
-
-# Buscar por ID
-GET /aruco-tags/buscar-por-id/{id}
-
-# Buscar por Código
-GET /aruco-tags/buscar-por-codigo/{codigo}
-
-# Buscar por Status
-GET /aruco-tags/buscar-por-status/{status}
-
-# Criar tag
-POST /aruco-tags/cadastrar
-
-# Atualizar tag
-PUT /aruco-tags/editar/{id}
-
-# Deletar tag
-DELETE /aruco-tags/deletar/{id}
-```
-
-</details>
-
-<details>
-<summary><b>📊 Status</b></summary>
-
-```bash
-# Listar status
-GET /status/listar
-
-# Buscar por ID
-GET /status/buscar-por-id/{id}
-
-# Buscar por Tipo
-GET /status/buscar-por-tipo?tipoStatus=...
-
-# Buscar por Descrição
-GET /status/buscar-por-descricao?descricao=...
-
-# Criar status
-POST /status/cadastrar
-
-# Atualizar status
-PUT /status/editar/{id}
-
-# Deletar status
-DELETE /status/deletar/{id}
-```
-
-</details>
-
-<details>
-<summary><b>📍 Localidades</b></summary>
-
-```bash
-# Listar localidades
-GET /localidades/listar
-
-# Buscar por ID
-GET /localidades/buscar-por-id/{id}
-
-# Buscar por Ponto de Referência
-GET /localidades/buscar-por-ponto-referencia/{ponto}
-
-# Buscar por Período
-GET /localidades/buscar-por-periodo?dataInicio=...&dataFim=...
-
-# Criar localidade
-POST /localidades/cadastrar
-
-# Atualizar localidade
-PUT /localidades/editar/{id}
-
-# Deletar localidade
-DELETE /localidades/deletar/{id}
-```
-
-</details>
 
 ---
 
-## 👥 Equipe
+## 🏢 Pátios
+
+### Listar Pátios
+```http
+GET /patios/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /patios/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Criar Pátio
+```http
+POST /patios/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "nome": "Patio AlfaBeta",
+  "endereco": "Rua Principal, 123",
+  "capacidadeMaxima": 500
+}
+```
+
+### Atualizar Pátio
+```http
+PUT /patios/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "nome": "Patio Atualizado",
+  "endereco": "Rua Nova, 456",
+  "capacidadeMaxima": 100
+}
+```
+
+### Deletar Pátio
+```http
+DELETE /patios/deletar/{id}
+Authorization: Bearer {jwt_token}
+```
+
+---
+
+## 🏍️ Motos
+
+### Listar Motos
+```http
+GET /motos/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Listar Motos com ArUco Tags
+```http
+GET /motos/motos-com-tags
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /motos/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Placa
+```http
+GET /motos/buscar-por-placa/{placa}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Fabricante
+```http
+GET /motos/buscar-por-fabricante?fabricante={fabricante}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/motos/buscar-por-fabricante?fabricante=Yamaha`
+
+### Buscar por Pátio
+```http
+GET /motos/buscar-por-patio/{idPatio}
+Authorization: Bearer {jwt_token}
+```
+
+### Criar Moto
+```http
+POST /motos/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "placa": "ABC-1234",
+  "modelo": "Honda CB500",
+  "fabricante": "Honda",
+  "ano": 2021,
+  "idPatio": 2,
+  "localizacaoAtual": "Setor A"
+}
+```
+
+### Atualizar Moto
+```http
+PUT /motos/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "placa": "XYZ-5678",
+  "modelo": "Yamaha MT-07",
+  "fabricante": "Yamaha",
+  "ano": 2022,
+  "idPatio": 2,
+  "localizacaoAtual": "Setor B"
+}
+```
+
+### Deletar Moto
+```http
+DELETE /motos/deletar/{id}
+Authorization: Bearer {jwt_token}
+```
+
+---
+
+## 📹 Câmeras
+
+### Listar Câmeras
+```http
+GET /cameras/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /cameras/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Status Operacional
+```http
+GET /cameras/buscar-por-status/{status}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/cameras/buscar-por-status/Operacional`
+
+### Criar Câmera
+```http
+POST /cameras/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "statusOperacional": "ONLINE",
+  "localizacaoFisica": "Entrada do Patio",
+  "idPatio": 2
+}
+```
+
+### Atualizar Câmera
+```http
+PUT /cameras/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "statusOperacional": "INATIVA",
+  "localizacaoFisica": "Saida do Patio",
+  "idPatio": 3
+}
+```
+
+### Deletar Câmera
+```http
+DELETE /cameras/deletar/{id}
+Authorization: Bearer {jwt_token}
+```
+
+---
+
+## 🏷️ ArUco Tags
+
+### Listar ArUco Tags
+```http
+GET /aruco-tags/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /aruco-tags/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Status
+```http
+GET /aruco-tags/buscar-por-status/{status}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/aruco-tags/buscar-por-status/ativo`
+
+### Buscar por Código
+```http
+GET /aruco-tags/buscar-por-codigo/{codigo}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/aruco-tags/buscar-por-codigo/TAG004`
+
+### Criar ArUco Tag
+```http
+POST /aruco-tags/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "codigo": "TAG12345",
+  "idMoto": 4,
+  "status": "ATIVO"
+}
+```
+
+### Atualizar ArUco Tag
+```http
+PUT /aruco-tags/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "codigo": "TAG99999",
+  "idMoto": 5,
+  "status": "INATIVO"
+}
+```
+
+### Deletar ArUco Tag
+```http
+DELETE /aruco-tags/deletar/{id}
+Authorization: Bearer {jwt_token}
+```
+
+---
+
+## 📊 Status
+
+### Listar Status
+```http
+GET /status/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /status/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Tipo de Status
+```http
+GET /status/buscar-por-tipo?tipoStatus={tipo}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/status/buscar-por-tipo?tipoStatus=BAIXA_BOLETIM_OCORRENCIA`
+
+### Buscar por Descrição
+```http
+GET /status/buscar-por-descricao?descricao={descricao}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/status/buscar-por-descricao?descricao=Perda por BO`
+
+### Buscar por Período
+```http
+GET /status/buscar-por-periodo?inicio={dataInicio}&fim={dataFim}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/status/buscar-por-periodo?inicio=2025-09-28T00:00:00&fim=2025-09-28T23:59:59`
+
+### Criar Status
+```http
+POST /status/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "idMoto": 4,
+  "tipoStatus": "DISPONIVEL",
+  "descricao": "Moto disponível para uso",
+  "idFuncionario": 3
+}
+```
+
+### Atualizar Status
+```http
+PUT /status/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "idMoto": 4,
+  "tipoStatus": "EM_MANUTENCAO",
+  "descricao": "Moto em manutenção preventiva",
+  "idFuncionario": 2
+}
+```
+
+### Deletar Status
+```http
+DELETE /status/deletar/{id}
+Authorization: Bearer {jwt_token}
+```
+
+---
+
+## 📍 Localidades
+
+### Listar Localidades
+```http
+GET /localidades/listar
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por ID
+```http
+GET /localidades/buscar-por-id/{id}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Pátio
+```http
+GET /localidades/buscar-por-patio/{idPatio}
+Authorization: Bearer {jwt_token}
+```
+
+### Buscar por Ponto de Referência
+```http
+GET /localidades/buscar-por-ponto-referencia/{pontoReferencia}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/localidades/buscar-por-ponto-referencia/Vaga`
+
+### Buscar por Período
+```http
+GET /localidades/buscar-por-periodo?dataInicio={dataInicio}&dataFim={dataFim}
+Authorization: Bearer {jwt_token}
+```
+**Exemplo:** `/localidades/buscar-por-periodo?dataInicio=2025-09-06T08:00:00&dataFim=2025-09-08T08:20:00`
+
+### Criar Localidade
+```http
+POST /localidades/cadastrar
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "idMoto": 1,
+  "idPatio": 2,
+  "pontoReferencia": "Vaga A15",
+  "observacoes": "Próximo à entrada"
+}
+```
+
+### Atualizar Localidade
+```http
+PUT /localidades/editar/{id}
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "idMoto": 1,
+  "idPatio": 2,
+  "pontoReferencia": "Vaga B20",
+  "observacoes": "Realocada para manutenção"
+}
+```
+
+### Deletar Localidade
+```http
+DELETE /localidades/deletar/{id}
+Authorization: Bearer {jwt_token}
+```
+
+---
+
+## ⚠️ Tratamento de Erros
+
+### Erro de Autenticação (401)
+```json
+{
+  "timestamp": "2025-09-29T10:30:00",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Token JWT inválido ou expirado"
+}
+```
+
+### Erro de Validação (400)
+```json
+{
+  "timestamp": "2025-09-29T10:30:00",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "CPF já cadastrado no sistema"
+}
+```
+
+### Erro de Recurso Não Encontrado (404)
+```json
+{
+  "timestamp": "2025-09-29T10:30:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Funcionário não encontrado com o ID: 999"
+}
+```
+
+---
+
+## 📊 Códigos de Resposta HTTP
+
+| Código | Descrição |
+|--------|-----------|
+| 200 | Sucesso na operação |
+| 201 | Recurso criado com sucesso |
+| 400 | Dados inválidos ou malformados |
+| 401 | Token JWT ausente ou inválido |
+| 403 | Acesso negado (permissões insuficientes) |
+| 404 | Recurso não encontrado |
+| 500 | Erro interno do servidor |
+
+---
+
+## 👥 Equipe de Desenvolvimento
 
 <table>
 <tr>
