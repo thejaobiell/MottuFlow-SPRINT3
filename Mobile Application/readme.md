@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg" alt="Spring Boot"/>
   <img src="https://img.shields.io/badge/MySQL-8.0-blue.svg" alt="MySQL"/>
   <img src="https://img.shields.io/badge/React%20Native-0.74-blue.svg" alt="React Native"/>
-  <img src="https://img.shields.io/badge/Expo-54-black.svg" alt="Expo"/>
+  <img src="https://img.shields.io/badge/Expo-53-black.svg" alt="Expo"/>
 </div>
 
 
@@ -21,7 +21,7 @@ O MottuFlow foi desenvolvido integrando as disciplinas de **Java Advanced**, **M
 
 ### 🎥 Demonstração
 
-[![Ver demonstração no YouTube](https://img.shields.io/badge/YouTube-Ver%20Demonstração-red?style=for-the-badge&logo=youtube)](<COLOCAR LINK>)
+[![Ver demonstração no YouTube](https://img.shields.io/badge/YouTube-Ver%20Demonstração-red?style=for-the-badge&logo=youtube)](<https://youtu.be/j_LRC3WB7pA>)
 
 ### 🔗 Repositórios do Projeto
 
@@ -75,7 +75,7 @@ O MottuFlow foi desenvolvido integrando as disciplinas de **Java Advanced**, **M
 - **Java 21+** ([OpenJDK](https://openjdk.org/install/) ou [Oracle JDK](https://www.oracle.com/java/technologies/downloads/))
 - **MySQL 8.0+** ([Download](https://dev.mysql.com/downloads/mysql/))
 - **Node.js 18+** ([Download](https://nodejs.org/))
-- **Expo SDK 54** ([Download](https://expo.dev/go))
+- **Expo SDK 53** ([Download](https://expo.dev/go))
 
 ## 🔧 Configuração e Execução da API
 
@@ -222,7 +222,46 @@ cd challenge-mottuflow
 npm install
 ```
 
-### 3. 🚀 Executando o App
+### 3. ⚙️ Conectando a API ao aplicativo
+
+#### 📍 Descobrindo o IP da sua máquina
+
+Antes de configurar a API, você precisa descobrir o endereço IP da sua máquina:
+
+**🐧 No Linux:**
+```bash
+hostname -I | awk '{print $1}'
+```
+
+**🪟 No Windows:**
+```cmd
+ipconfig | findstr "IPv4" | findstr "192.168\|10\.\|172\."
+```
+Ou simplesmente:
+```cmd
+ipconfig
+```
+E procure pelo "Endereço IPv4" da sua conexão ativa.
+
+
+#### 🔧 Configurando a API
+
+Edite o arquivo `types/Api.ts` e substitua `<IP DA SUA MÁQUINA AQUI>` pelo IP obtido:
+
+```typescript
+const api = axios.create({
+	baseURL: "http://<IP DA SUA MÁQUINA AQUI>:8080/api",
+	headers: { "Content-Type": "application/json" },
+});
+```
+
+#### 📝 Dicas importantes:
+
+- **IP local vs externo**: Use o IP da rede local (geralmente começa com 192.168.x.x, 10.x.x.x ou 172.16-31.x.x)
+- **Firewall**: Certifique-se de que a porta 8080 não está bloqueada pelo firewall
+- **Mesma rede**: O dispositivo que vai acessar a API deve estar na mesma rede Wi-Fi/Ethernet
+
+### 4. 🚀 Executando o App
 
 ```bash
 # Execute o projeto
@@ -785,6 +824,7 @@ O app mobile oferece:
 
 - **🔐 JWT Authentication**: Tokens seguros para autenticação
 - **🔒 Spring Security**: Configuração robusta de segurança
+- **👤 Controle de Acesso**: Diferentes níveis de permissão
 - **🛡️ Validação de Dados**: Proteção contra injeção e ataques
 
 ## ⚡ Troubleshooting
