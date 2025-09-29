@@ -785,7 +785,6 @@ O app mobile oferece:
 
 - **🔐 JWT Authentication**: Tokens seguros para autenticação
 - **🔒 Spring Security**: Configuração robusta de segurança
-- **👤 Controle de Acesso**: Diferentes níveis de permissão
 - **🛡️ Validação de Dados**: Proteção contra injeção e ataques
 
 ## ⚡ Troubleshooting
