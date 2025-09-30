@@ -8,11 +8,11 @@
 ![Oracle](https://img.shields.io/badge/Oracle-19c-red.svg)
 ![xUnit](https://img.shields.io/badge/xUnit-2.5-orange.svg)
 
-## 🚀 Sobre o Projeto
+## 1. 🚀 Sobre o Projeto
 
 **MottuFlow** é uma solução completa para gerenciamento de frotas de motocicletas, combinando **API REST** moderna com interface web intuitiva. Utiliza **visão computacional** e **ArUco Tags** para identificação automática de veículos, oferecendo controle total sobre funcionários, pátios, motos, câmeras e localização de ativos.
 
-## 👥 Integrantes
+## 2. 👥 Integrantes
 
 | Nome | RM | Turma |
 |------|----|-------|
@@ -20,8 +20,9 @@
 | Léo Mota Lima | 557851 | 2TDSB2025 |
 | Lucas Leal das Chagas | 551124 | 2TDSB2025 |
 
-## 📌 Justificativa da Arquitetura
+## 3. 📌 Justificativa da Arquitetura e Domínio
 
+### Arquitetura
 Arquitetura em camadas para **manutenção, escalabilidade e testes**:
 
 | Camada | Função |
@@ -33,80 +34,20 @@ Arquitetura em camadas para **manutenção, escalabilidade e testes**:
 
 **DTOs** são usados para padronizar dados entre camadas.
 
-## 📌 Justificativa do Domínio
-
+### Domínio
 | Entidade | Função |
 |----------|-------|
 | **Funcionário** | Organiza e monitora motos no pátio |
 | **Moto** | Principal recurso para entregas e locação |
 | **Pátio** | Local físico para armazenamento e organização das motos |
 
-## 🛠 Tecnologias
+## 4. 🖼 Endpoints e Exemplos de Payloads
 
-- **Backend:** ASP.NET Core 8  
-- **Banco de Dados:** Oracle 19c  
-- **Controle de Versão:** GitHub  
-- **Swagger (Swashbuckle):** Documentação e testes de endpoints 
+Abaixo estão listados os principais **endpoints da API**, separados por recurso, acompanhados de exemplos de payloads para facilitar os testes.
 
-## 🏢 Módulos Principais
+---
 
-| Módulo | Descrição | Funcionalidades |
-|--------|-----------|----------------|
-| **👥 Funcionários** | Gestão de pessoas | CRUD, controle de acessos, histórico |
-| **🏪 Pátios** | Gerenciamento de locais | Cadastro, monitoramento e capacidade |
-| **🏍️ Motos** | Controle da frota | Registro, status, localização e manutenção |
-| **📹 Câmeras** | Monitoramento visual | Configuração e status das câmeras |
-| **🏷️ ArUco Tags** | Identificação automática | Cadastro e rastreamento via visão computacional |
-| **📍 Status & Localização** | Rastreamento em tempo real | Monitoramento de posição, disponibilidade e alertas |
-
-## 📂 Estrutura do Projeto
-
-```
-MottuFlow/
-├── Controllers/              # Endpoints da API (recebem requisições HTTP)
-├── DTOs/                     # Objetos de Transferência de Dados entre camadas
-├── Data/                     # Configuração e contexto do banco de dados (DbContext)
-├── Hateoas/                  # Implementação dos links HATEOAS
-├── Helpers/                  # Classes utilitárias e funções de apoio
-├── Migrations/               # Histórico e scripts de versionamento do banco
-├── Models/                   # Entidades do domínio e modelos de dados
-├── Properties/               # Configurações do projeto .NET
-├── Repositories/             # Acesso a dados (consultas e persistência)
-├── Services/                 # Regras de negócio e lógica da aplicação
-├── Static/                   # Arquivos estáticos (imagens, css, js)
-├── Swagger/                  # Configurações adicionais do Swagger/OpenAPI
-├── .gitignore                # Arquivos e pastas ignorados pelo Git
-├── AppDbContextFactory.cs    # Fábrica para criar instâncias do DbContext
-├── MottuFlow.csproj          # Arquivo de configuração do projeto .NET
-├── MottuFlow.http            # Arquivo de testes de requisições HTTP
-├── Program.cs                # Ponto de entrada da aplicação
-├── README.md                 # Documentação do projeto
-├── appsettings.Development.json # Configurações específicas do ambiente de desenvolvimento
-├── appsettings.json          # Configurações gerais da aplicação
-```
-
-## 🚀 Execução da API
-
-1. **Clone o repositório:**
-```bash
-git clone https://github.com/leomotalima/MottuFlow.git
-cd MottuFlow
-```
-
-2. **Restaure pacotes e execute:**
-```bash
-dotnet restore
-dotnet run
-```
-
-3. **Acesse a API:**
-- Navegador ou Postman: [http://localhost:5224](http://localhost:5224)  
-- Swagger (OpenAPI): [http://localhost:5224/swagger](http://localhost:5224/swagger)
-
-```
-4. **Endpoints e Exemplos de Payloads:**
-
-### Funcionários
+### 👥 Funcionários
 ```http
 GET /api/funcionarios
 POST /api/funcionarios
@@ -127,8 +68,11 @@ DELETE /api/funcionarios/{id}
   }
 ]
 ```
+**Status codes esperados:** `200 OK`, `201 Created`, `400 Bad Request`, `404 Not Found`
 
-### Pátios
+---
+
+### 🏪 Pátios
 ```http
 GET /api/patios
 POST /api/patios
@@ -147,7 +91,9 @@ DELETE /api/patios/{id}
 ]
 ```
 
-### Motos
+---
+
+### 🏍️ Motos
 ```http
 GET /api/motos
 POST /api/motos
@@ -169,7 +115,9 @@ DELETE /api/motos/{id}
 ]
 ```
 
-### Câmeras
+---
+
+### 📹 Câmeras
 ```http
 GET /api/cameras
 POST /api/cameras
@@ -188,7 +136,9 @@ DELETE /api/cameras/{id}
 ]
 ```
 
-### ArUco Tags
+---
+
+### 🏷️ ArUco Tags
 ```http
 GET /api/aruco-tags
 POST /api/aruco-tags
@@ -207,7 +157,9 @@ DELETE /api/aruco-tags/{id}
 ]
 ```
 
-### Registro de Status
+---
+
+### 📍 Registro de Status
 ```http
 GET /api/registro-status
 POST /api/registro-status
@@ -226,7 +178,9 @@ POST /api/registro-status
 ]
 ```
 
-### Localidades
+---
+
+### 🌐 Localidades
 ```http
 GET /api/localidades
 POST /api/localidades
@@ -247,7 +201,7 @@ POST /api/localidades
 
 ---
 
-### 🔗 HATEOAS
+## 5. 🔗 HATEOAS
 Todos os recursos retornam **links de navegação** seguindo o padrão **HATEOAS**, permitindo interação intuitiva entre endpoints:  
 
 - `self` → Link para o próprio recurso  
@@ -258,7 +212,7 @@ Esse padrão garante **descobribilidade**, facilitando o consumo da API e promov
 
 ---
 
-### 📌 Boas Práticas e Observações
+## 6. 📌 Boas Práticas e Observações
 - **Status Codes Utilizados:**
   - `200 OK` → Requisição bem-sucedida  
   - `201 Created` → Recurso criado com sucesso  
@@ -274,7 +228,7 @@ Esse padrão garante **descobribilidade**, facilitando o consumo da API e promov
 
 ---
 
-## ✅ Testes rápidos com cURL
+## 7. ✅ Testes rápidos com cURL
 
 ### 🔹 1. Verificar se o Swagger está de pé
 ```bash
