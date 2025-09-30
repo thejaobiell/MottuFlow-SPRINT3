@@ -104,9 +104,10 @@ CREATE TABLE auditoria (
 CREATE TABLE fato_motos_status (
     id_patio NUMBER(10),
     tipo_status VARCHAR2(50),
-    quantidade NUMBER
+    quantidade NUMBER,
+    CONSTRAINT pk_fato_motos_status PRIMARY KEY (id_patio, tipo_status),
+    CONSTRAINT fk_patio FOREIGN KEY (id_patio) REFERENCES patio(id_patio)
 );
-
 -- ============================================================
 -- SEQUENCES
 -- ============================================================
@@ -204,18 +205,22 @@ BEGIN
            '"nome": "' || f.nome || '", ' ||
            '"cargo": "' || f.cargo || '", ' ||
            '"motos": [' ||
-           LISTAGG(
-               '{"id_moto":'|| m.id_moto ||
-               ',"placa":"' || m.placa || '"' ||
-               ',"status":"' || rs.tipo_status || '"}', ','
-           ) WITHIN GROUP (ORDER BY m.id_moto) ||
+           NVL(
+               LISTAGG(
+                   '{"id_moto":' || m.id_moto ||
+                   ',"placa":"' || m.placa || '"' ||
+                   ',"status":"' || rs.tipo_status || '"}', ','
+               ) WITHIN GROUP (ORDER BY m.id_moto),
+               ''
+           ) ||
            ']' ||
            '}'
     INTO v_json
     FROM funcionario f
-    LEFT JOIN moto m ON f.id_funcionario = m.id_moto
-    LEFT JOIN registro_status rs ON m.id_moto = rs.id_moto
-    WHERE f.id_funcionario = p_id_funcionario;
+    LEFT JOIN registro_status rs ON f.id_funcionario = rs.id_funcionario
+    LEFT JOIN moto m ON rs.id_moto = m.id_moto
+    WHERE f.id_funcionario = p_id_funcionario
+    GROUP BY f.id_funcionario, f.nome, f.cargo;
 
     DBMS_OUTPUT.PUT_LINE(v_json);
 
@@ -229,51 +234,69 @@ EXCEPTION
 END;
 /
 
+
 -- ============================================================
 -- PROCEDURE 2 - Soma por patio/status
 -- ============================================================
 DROP PROCEDURE soma_fato_motos;
 
-CREATE OR REPLACE PROCEDURE soma_fato_motos
-IS
+CREATE OR REPLACE PROCEDURE soma_fato_motos IS
+    -- Variáveis de controle
+    v_id_patio       fato_motos_status.id_patio%TYPE;
+    v_tipo_status    fato_motos_status.tipo_status%TYPE;
+    v_quantidade     fato_motos_status.quantidade%TYPE;
+
+    -- Variáveis de soma
+    v_subtotal       NUMBER := 0;
+    v_total_geral    NUMBER := 0;
+    v_patio_atual    fato_motos_status.id_patio%TYPE;
+
+    -- Cursor para ler os dados já ordenados
     CURSOR c_fato IS
         SELECT id_patio, tipo_status, quantidade
         FROM fato_motos_status
         ORDER BY id_patio, tipo_status;
 
-    v_id_patio NUMBER := NULL;
-    v_subtotal NUMBER := 0;
-    v_total NUMBER := 0;
 BEGIN
-    FOR rec IN c_fato LOOP
-        IF v_id_patio IS NULL THEN
-            v_id_patio := rec.id_patio;
-            v_subtotal := 0;
-        ELSIF v_id_patio <> rec.id_patio THEN
-            DBMS_OUTPUT.PUT_LINE('Subtotal Patio ' || v_id_patio || ': ' || v_subtotal);
-            v_id_patio := rec.id_patio;
+    v_patio_atual := NULL;
+
+    -- Loop pelos registros da tabela de fatos
+    FOR r IN c_fato LOOP
+        -- Mudança de grupo (novo pátio)
+        IF v_patio_atual IS NOT NULL AND r.id_patio != v_patio_atual THEN
+            -- Exibe subtotal do grupo anterior
+            DBMS_OUTPUT.PUT_LINE('{"id_patio": ' || v_patio_atual || ', "tipo_status": null, "subtotal": ' || v_subtotal || '}');
             v_subtotal := 0;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Patio: ' || rec.id_patio || 
-                             ', Status: ' || rec.tipo_status || 
-                             ', Quantidade: ' || rec.quantidade);
+        -- Exibe linha detalhada
+        DBMS_OUTPUT.PUT_LINE('{"id_patio": ' || r.id_patio || ', "tipo_status": "' || r.tipo_status || '", "quantidade": ' || r.quantidade || '}');
 
-        v_subtotal := v_subtotal + rec.quantidade;
-        v_total := v_total + rec.quantidade;
+        -- Acumula subtotal e total geral
+        v_subtotal    := v_subtotal + r.quantidade;
+        v_total_geral := v_total_geral + r.quantidade;
+
+        v_patio_atual := r.id_patio;
     END LOOP;
 
-    IF v_id_patio IS NOT NULL THEN
-        DBMS_OUTPUT.PUT_LINE('Subtotal Patio ' || v_id_patio || ': ' || v_subtotal);
+    -- Subtotal do último grupo
+    IF v_patio_atual IS NOT NULL THEN
+        DBMS_OUTPUT.PUT_LINE('{"id_patio": ' || v_patio_atual || ', "tipo_status": null, "subtotal": ' || v_subtotal || '}');
     END IF;
 
-    DBMS_OUTPUT.PUT_LINE('Total Geral: ' || v_total);
+    -- Total geral
+    DBMS_OUTPUT.PUT_LINE('{"id_patio": null, "tipo_status": null, "total_geral": ' || v_total_geral || '}');
 
 EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('{"erro": "Nenhum dado encontrado na tabela de fatos."}');
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('{"erro": "Violação de chave única detectada."}');
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
-END;
+        DBMS_OUTPUT.PUT_LINE('{"erro": "Erro inesperado: ' || SQLERRM || '"}');
+END soma_fato_motos;
 /
+
 
 -- ============================================================
 -- FUNÇÃO 1 - Moto para JSON
@@ -341,25 +364,61 @@ CREATE OR REPLACE TRIGGER auditoria_moto
 AFTER INSERT OR UPDATE OR DELETE ON moto
 FOR EACH ROW
 DECLARE
-    v_tipo_operacao    VARCHAR2(10);
-    v_valores_anteriores VARCHAR2(4000);
-    v_valores_novos      VARCHAR2(4000);
+    v_tipo_operacao      VARCHAR2(10);
+    v_valores_anteriores CLOB;
+    v_valores_novos      CLOB;
 BEGIN
     -- Define o tipo de operação e os valores
     IF INSERTING THEN
-        v_tipo_operacao    := 'INSERT';
+        v_tipo_operacao := 'INSERT';
         v_valores_anteriores := NULL;
-        v_valores_novos      := :NEW.placa;
+        v_valores_novos := 
+            '{' ||
+            '"id_moto": ' || :NEW.id_moto || ',' ||
+            '"placa": "' || :NEW.placa || '",' ||
+            '"modelo": "' || :NEW.modelo || '",' ||
+            '"fabricante": "' || :NEW.fabricante || '",' ||
+            '"ano": ' || :NEW.ano || ',' ||
+            '"id_patio": ' || :NEW.id_patio || ',' ||
+            '"localizacao_atual": "' || :NEW.localizacao_atual || '"' ||
+            '}';
 
     ELSIF UPDATING THEN
-        v_tipo_operacao    := 'UPDATE';
-        v_valores_anteriores := :OLD.placa;
-        v_valores_novos      := :NEW.placa;
+        v_tipo_operacao := 'UPDATE';
+        v_valores_anteriores := 
+            '{' ||
+            '"id_moto": ' || :OLD.id_moto || ',' ||
+            '"placa": "' || :OLD.placa || '",' ||
+            '"modelo": "' || :OLD.modelo || '",' ||
+            '"fabricante": "' || :OLD.fabricante || '",' ||
+            '"ano": ' || :OLD.ano || ',' ||
+            '"id_patio": ' || :OLD.id_patio || ',' ||
+            '"localizacao_atual": "' || :OLD.localizacao_atual || '"' ||
+            '}';
+        v_valores_novos := 
+            '{' ||
+            '"id_moto": ' || :NEW.id_moto || ',' ||
+            '"placa": "' || :NEW.placa || '",' ||
+            '"modelo": "' || :NEW.modelo || '",' ||
+            '"fabricante": "' || :NEW.fabricante || '",' ||
+            '"ano": ' || :NEW.ano || ',' ||
+            '"id_patio": ' || :NEW.id_patio || ',' ||
+            '"localizacao_atual": "' || :NEW.localizacao_atual || '"' ||
+            '}';
 
     ELSIF DELETING THEN
-        v_tipo_operacao    := 'DELETE';
-        v_valores_anteriores := :OLD.placa;
-        v_valores_novos      := NULL;
+        v_tipo_operacao := 'DELETE';
+        v_valores_anteriores := 
+            '{' ||
+            '"id_moto": ' || :OLD.id_moto || ',' ||
+            '"placa": "' || :OLD.placa || '",' ||
+            '"modelo": "' || :OLD.modelo || '",' ||
+            '"fabricante": "' || :OLD.fabricante || '",' ||
+            '"ano": ' || :OLD.ano || ',' ||
+            '"id_patio": ' || :OLD.id_patio || ',' ||
+            '"localizacao_atual": "' || :OLD.localizacao_atual || '"' ||
+            '}';
+        v_valores_novos := NULL;
     END IF;
 
     -- Faz o insert na tabela de auditoria
@@ -380,4 +439,5 @@ BEGIN
         v_valores_novos
     );
 END;
+/
 
