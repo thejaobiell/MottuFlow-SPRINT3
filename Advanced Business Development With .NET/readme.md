@@ -104,7 +104,7 @@ dotnet run
 - Swagger (OpenAPI): [http://localhost:5224/swagger](http://localhost:5224/swagger)
 
 ```
-## 🖼 Endpoints e Exemplos de Payloads
+4. **Endpoints e Exemplos de Payloads:**
 
 ### Funcionários
 ```http
