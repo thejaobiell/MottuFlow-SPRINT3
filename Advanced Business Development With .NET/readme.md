@@ -63,27 +63,26 @@ Arquitetura em camadas para **manutenção, escalabilidade e testes**:
 
 ```
 MottuFlow/
-├── Controllers/
-├── DTOs/
-├── Data/
-├── Hateoas/
-├── Helpers/
-├── Migrations/
-├── Models/
-├── Properties/
-├── Repositories/
-├── Services/
-├── Static/
-├── Swagger/
-├── .gitignore
-├── AppDbContextFactory.cs
-├── MottuFlow.csproj
-├── MottuFlow.http
-├── Program.cs
-├── README.md
-├── appsettings.Development.json
-├── appsettings.json
-└── post.txt
+├── Controllers/              # Endpoints da API (recebem requisições HTTP)
+├── DTOs/                     # Objetos de Transferência de Dados entre camadas
+├── Data/                     # Configuração e contexto do banco de dados (DbContext)
+├── Hateoas/                  # Implementação dos links HATEOAS
+├── Helpers/                  # Classes utilitárias e funções de apoio
+├── Migrations/               # Histórico e scripts de versionamento do banco
+├── Models/                   # Entidades do domínio e modelos de dados
+├── Properties/               # Configurações do projeto .NET
+├── Repositories/             # Acesso a dados (consultas e persistência)
+├── Services/                 # Regras de negócio e lógica da aplicação
+├── Static/                   # Arquivos estáticos (imagens, css, js)
+├── Swagger/                  # Configurações adicionais do Swagger/OpenAPI
+├── .gitignore                # Arquivos e pastas ignorados pelo Git
+├── AppDbContextFactory.cs    # Fábrica para criar instâncias do DbContext
+├── MottuFlow.csproj          # Arquivo de configuração do projeto .NET
+├── MottuFlow.http            # Arquivo de testes de requisições HTTP
+├── Program.cs                # Ponto de entrada da aplicação
+├── README.md                 # Documentação do projeto
+├── appsettings.Development.json # Configurações específicas do ambiente de desenvolvimento
+├── appsettings.json          # Configurações gerais da aplicação
 ```
 
 ## 🚀 Execução da API
