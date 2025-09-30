@@ -52,6 +52,18 @@ As entidades refletem a operação da startup Mottu:
 - **Controle de Versão:** GitHub  
 - **Swagger (Swashbuckle):** Documentação e testes de endpoints
 
+## 🏢 Módulos Principais
+
+| Módulo | Descrição | Funcionalidades |
+|--------|-----------|----------------|
+| **👥 Funcionários** | Gestão de pessoas | CRUD, controle de acessos, histórico |
+| **🏪 Pátios** | Gerenciamento de locais | Cadastro, monitoramento e capacidade |
+| **🏍️ Motos** | Controle da frota | Registro, status, localização e manutenção |
+| **📹 Câmeras** | Monitoramento visual | Configuração e status das câmeras |
+| **🏷️ ArUco Tags** | Identificação automática | Cadastro e rastreamento via visão computacional |
+| **📍 Status & Localização** | Rastreamento em tempo real | Monitoramento de posição, disponibilidade e alertas |
+
+
 ## 📂 Estrutura do Projeto
 
 ```
