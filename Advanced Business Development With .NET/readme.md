@@ -46,7 +46,7 @@ Arquitetura em camadas para **manutenção, escalabilidade e testes**:
 - **Backend:** ASP.NET Core 8  
 - **Banco de Dados:** Oracle 19c  
 - **Controle de Versão:** GitHub  
-- **Testes:** xUnit  
+- **Swagger (Swashbuckle):** Documentação e testes de endpoints 
 
 ## 🏢 Módulos Principais
 
