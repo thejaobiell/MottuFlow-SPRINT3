@@ -73,6 +73,8 @@ MottuFlow/
 ├── Properties/
 ├── Repositories/
 ├── Services/
+├── Static/
+├── Swagger/
 ├── .gitignore
 ├── AppDbContextFactory.cs
 ├── MottuFlow.csproj
