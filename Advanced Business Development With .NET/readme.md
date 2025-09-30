@@ -10,9 +10,7 @@
 
 ## 🚀 Sobre o Projeto
 
-**MottuFlow** é uma solução completa para gerenciamento de frotas de motocicletas, com **API REST** e interface web. Utiliza **visão computacional** e **ArUco Tags** para identificação automática de veículos.
-
-Entidades principais: **Funcionários**, **Motos**, **Pátios**, **Câmeras**, **ArUco Tags**, **Localidades**, **Registro de Status**.
+**MottuFlow** é uma solução completa para gerenciamento de frotas de motocicletas, combinando **API REST** moderna com interface web intuitiva. Utiliza **visão computacional** e **ArUco Tags** para identificação automática de veículos, oferecendo controle total sobre funcionários, pátios, motos, câmeras e localização de ativos.
 
 ## 👥 Integrantes
 
@@ -24,20 +22,18 @@ Entidades principais: **Funcionários**, **Motos**, **Pátios**, **Câmeras**, *
 
 ## 📌 Justificativa da Arquitetura
 
-Arquitetura em camadas:
+Arquitetura em camadas para **manutenção, escalabilidade e testes**:
 
 | Camada | Função |
 |--------|--------|
 | **Controller** | Recebe requisições HTTP e retorna respostas |
-| **Service** | Contém regras de negócio e processamento |
-| **Repository** | Gerencia acesso ao banco de dados |
+| **Service** | Contém regras de negócio e processamento de dados |
+| **Repository** | Gerencia o acesso ao banco de dados |
 | **Data/DbContext** | Conecta e gerencia operações no banco de dados |
 
-**DTOs**: Padronizam dados entre camadas, garantindo segurança e consistência.
+**DTOs** são usados para padronizar dados entre camadas.
 
 ## 📌 Justificativa do Domínio
-
-As entidades refletem a operação da startup Mottu:
 
 | Entidade | Função |
 |----------|-------|
@@ -50,7 +46,18 @@ As entidades refletem a operação da startup Mottu:
 - **Backend:** ASP.NET Core 8  
 - **Banco de Dados:** Oracle 19c  
 - **Controle de Versão:** GitHub  
-- **Swagger (Swashbuckle):** Documentação e testes de endpoints
+- **Testes:** xUnit  
+
+## 🏢 Módulos Principais
+
+| Módulo | Descrição | Funcionalidades |
+|--------|-----------|----------------|
+| **👥 Funcionários** | Gestão de pessoas | CRUD, controle de acessos, histórico |
+| **🏪 Pátios** | Gerenciamento de locais | Cadastro, monitoramento e capacidade |
+| **🏍️ Motos** | Controle da frota | Registro, status, localização e manutenção |
+| **📹 Câmeras** | Monitoramento visual | Configuração e status das câmeras |
+| **🏷️ ArUco Tags** | Identificação automática | Cadastro e rastreamento via visão computacional |
+| **📍 Status & Localização** | Rastreamento em tempo real | Monitoramento de posição, disponibilidade e alertas |
 
 ## 📂 Estrutura do Projeto
 
@@ -66,8 +73,7 @@ MottuFlow/
 ├── Properties/
 ├── Repositories/
 ├── Services/
-├── Static/
-├── Swagger/
+├── .gitignore
 ├── AppDbContextFactory.cs
 ├── MottuFlow.csproj
 ├── MottuFlow.http
@@ -75,6 +81,7 @@ MottuFlow/
 ├── README.md
 ├── appsettings.Development.json
 ├── appsettings.json
+└── post.txt
 ```
 
 ## 🚀 Execução da API
@@ -92,114 +99,185 @@ dotnet run
 ```
 
 3. **Acesse a API:**
-- Navegador/Postman: [http://localhost:5224](http://localhost:5224)  
-- Swagger: [http://localhost:5224/swagger](http://localhost:5224/swagger)
+- Navegador ou Postman: [http://localhost:5224](http://localhost:5224)  
+- Swagger (OpenAPI): [http://localhost:5224/swagger](http://localhost:5224/swagger)
 
-## 🖼 Endpoints e Exemplos (curl)
-
-### Funcionários
+4. **Rodar testes automatizados:**
 ```bash
-GET /api/funcionarios
-POST /api/funcionarios -H "Content-Type: application/json" -d '{
-  "nome": "Leonardo Mota",
-  "cpf": "12345678900",
-  "cargo": "Desenvolvedor",
-  "telefone": "(11) 98765-4321",
-  "email": "leonardo@email.com",
-  "senha": "Senha123!"
-}'
-PUT /api/funcionarios/{id} -H "Content-Type: application/json" -d '{
-  "nome": "Leonardo Mota"
-}'
-DELETE /api/funcionarios/{id}
+dotnet test
 ```
 
-### Motos
-```bash
-GET /api/motos
-POST /api/motos -H "Content-Type: application/json" -d '{
-  "Placa": "ABC-1234",
-  "Modelo": "Honda CG 160",
-  "Fabricante": "Honda",
-  "Ano": 2023,
-  "IdPatio": 1,
-  "LocalizacaoAtual": "Entrada Principal"
-}'
-PUT /api/motos/{id} -H "Content-Type: application/json" -d '{
-  "Modelo": "Honda CG 160"
-}'
-DELETE /api/motos/{id}
+## 🖼 Endpoints e Exemplos de Payloads
+
+### Funcionários
+```http
+GET /api/funcionarios
+POST /api/funcionarios
+PUT /api/funcionarios/{id}
+DELETE /api/funcionarios/{id}
+```
+**Exemplo POST/PUT**
+```json
+[
+  {
+    "id_funcionario": 1,
+    "nome": "Joao",
+    "cpf": "539.371.598-60",
+    "cargo": "Mecanico",
+    "telefone": "(11) 99368-5770",
+    "email": "joao@email.com",
+    "senha": "123"
+  }
+]
 ```
 
 ### Pátios
-```bash
+```http
 GET /api/patios
-POST /api/patios -H "Content-Type: application/json" -d '{
-  "Nome": "Patio Central",
-  "Endereco": "Rua das Flores, 123",
-  "CapacidadeMaxima": 50
-}'
-PUT /api/patios/{id} -H "Content-Type: application/json" -d '{
-  "Nome": "Patio Central"
-}'
+POST /api/patios
+PUT /api/patios/{id}
 DELETE /api/patios/{id}
+```
+**Exemplo POST/PUT**
+```json
+[
+  {
+    "id_patio": 1,
+    "nome": "Patio Central",
+    "endereco": "Rua Principal, 123",
+    "capacidade_maxima": 50
+  }
+]
+```
+
+### Motos
+```http
+GET /api/motos
+POST /api/motos
+PUT /api/motos/{id}
+DELETE /api/motos/{id}
+```
+**Exemplo POST/PUT**
+```json
+[
+  {
+    "id_moto": 1,
+    "placa": "ABC-1234",
+    "modelo": "Honda CB500",
+    "fabricante": "Honda",
+    "ano": 2021,
+    "id_patio": 1,
+    "localizacao_atual": "Setor A"
+  }
+]
 ```
 
 ### Câmeras
-```bash
+```http
 GET /api/cameras
-POST /api/cameras -H "Content-Type: application/json" -d '{
-  "StatusOperacional": "Ativa",
-  "LocalizacaoFisica": "Entrada Principal",
-  "IdPatio": 1
-}'
-PUT /api/cameras/{id} -H "Content-Type: application/json" -d '{
-  "StatusOperacional": "Ativa"
-}'
+POST /api/cameras
+PUT /api/cameras/{id}
 DELETE /api/cameras/{id}
+```
+**Exemplo POST/PUT**
+```json
+[
+  {
+    "id_camera": 1,
+    "status_operacional": "ATIVA",
+    "localizacao_fisica": "Entrada do Patio",
+    "id_patio": 1
+  }
+]
 ```
 
 ### ArUco Tags
-```bash
+```http
 GET /api/aruco-tags
-POST /api/aruco-tags -H "Content-Type: application/json" -d '{
-  "codigo": "TAG-001",
-  "status": "Ativo",
-  "id_moto": 1
-}'
-PUT /api/aruco-tags/{id} -H "Content-Type: application/json" -d '{
-  "codigo": "TAG-001"
-}'
+POST /api/aruco-tags
+PUT /api/aruco-tags/{id}
 DELETE /api/aruco-tags/{id}
 ```
-
-### Localidades
-```bash
-GET /api/localidades
-POST /api/localidades -H "Content-Type: application/json" -d '{
-  "dataHora": "2025-09-30T12:00:00",
-  "pontoReferencia": "Entrada Principal",
-  "idMoto": 1,
-  "idPatio": 1,
-  "idCamera": 1
-}'
+**Exemplo POST/PUT**
+```json
+[
+  {
+    "id_tag": 1,
+    "codigo": "TAG12345",
+    "status": "ATIVO",
+    "id_moto": 1
+  }
+]
 ```
 
 ### Registro de Status
-```bash
+```http
 GET /api/registro-status
-POST /api/registro-status -H "Content-Type: application/json" -d '{
-  "tipo_status": "Entrada",
-  "descricao": "Moto entrou no pátio",
-  "data_status": "2025-09-29T15:00:00",
-  "id_moto": 1,
-  "id_funcionario": 1
-}'
+POST /api/registro-status
+```
+**Exemplo POST**
+```json
+[
+  {
+    "id_status": 1,
+    "tipo_status": "Disponibilidade",
+    "descricao": "Moto disponível para uso",
+    "data_status": "2025-05-18T20:00:00",
+    "id_moto": 1,
+    "id_funcionario": 1
+  }
+]
 ```
 
-## ✅ Testes rápidos com cURL
+### Localidades
+```http
+GET /api/localidades
+POST /api/localidades
+```
+**Exemplo POST**
+```json
+[
+  {
+    "id_localidade": 1,
+    "data_hora": "2025-05-18T20:00:00",
+    "ponto_referencia": "Entrada Principal",
+    "id_moto": 1,
+    "id_patio": 1,
+    "id_camera": 1
+  }
+]
+```
 
-Use os comandos abaixo para confirmar que a API está ativa:
+---
+
+### 🔗 HATEOAS
+Todos os recursos retornam **links de navegação** seguindo o padrão **HATEOAS**, permitindo interação intuitiva entre endpoints:  
+
+- `self` → Link para o próprio recurso  
+- `update` → Link para atualizar o recurso  
+- `delete` → Link para remover o recurso  
+
+Esse padrão garante **descobribilidade**, facilitando o consumo da API e promovendo boas práticas REST.
+
+---
+
+### 📌 Boas Práticas e Observações
+- **Status Codes Utilizados:**
+  - `200 OK` → Requisição bem-sucedida  
+  - `201 Created` → Recurso criado com sucesso  
+  - `204 No Content` → Recurso atualizado ou excluído, sem retorno de conteúdo  
+  - `400 Bad Request` → Erro de requisição (parâmetros inválidos ou faltantes)  
+  - `404 Not Found` → Recurso não encontrado  
+
+- **Documentação no Swagger:**  
+  Todos os endpoints estão descritos e exemplificados:  
+  - Exemplos de requisição e resposta  
+  - Descrição detalhada de parâmetros  
+  - Estrutura de modelos de dados
+
+---
+
+## ✅ Testes rápidos com cURL
 
 ### 🔹 1. Verificar se o Swagger está de pé
 ```bash
@@ -224,19 +302,10 @@ curl -X POST http://localhost:5224/api/funcionarios -H "Content-Type: applicatio
 ```
 
 ### 🔹 4. Health Check (Ping)
-Se quiser, crie um endpoint de teste:
-```csharp
-[HttpGet("ping")]
-public IActionResult Ping()
-{
-    return Ok(new { status = "API rodando 🚀" });
-}
-```
-
-E teste com:
 ```bash
 curl -i http://localhost:5224/api/health/ping
 ```
 Resposta esperada:
 ```json
 { "status": "API rodando 🚀" }
+```
