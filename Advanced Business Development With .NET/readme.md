@@ -102,11 +102,7 @@ dotnet run
 - Navegador ou Postman: [http://localhost:5224](http://localhost:5224)  
 - Swagger (OpenAPI): [http://localhost:5224/swagger](http://localhost:5224/swagger)
 
-4. **Rodar testes automatizados:**
-```bash
-dotnet test
 ```
-
 ## 🖼 Endpoints e Exemplos de Payloads
 
 ### Funcionários
