@@ -8,23 +8,11 @@
 ![Oracle](https://img.shields.io/badge/Oracle-19c-red.svg)
 ![xUnit](https://img.shields.io/badge/xUnit-2.5-orange.svg)
 
-
 ## 🚀 Sobre o Projeto
 
-**MottuFlow** é uma solução completa para gerenciamento de frotas de motocicletas, desenvolvida com arquitetura híbrida que combina **API REST** moderna com interface web intuitiva. O sistema utiliza **visão computacional** e **ArUco Tags** para identificação automática de veículos, oferecendo controle total sobre funcionários, pátios, motos, câmeras e localização de ativos.
+**MottuFlow** é uma solução completa para gerenciamento de frotas de motocicletas, com **API REST** e interface web. Utiliza **visão computacional** e **ArUco Tags** para identificação automática de veículos.
 
---- 
-
-O sistema integra uma **API REST moderna** com interface web e utiliza **visão computacional** para automação na identificação dos veículos, facilitando o controle de:
-
-- Funcionários  
-- Pátios  
-- Motos  
-- Câmeras
-- ArUco Tags
-- Status e Localização em tempo real
-
----
+Entidades principais: **Funcionários**, **Motos**, **Pátios**, **Câmeras**, **ArUco Tags**, **Localidades**, **Registro de Status**.
 
 ## 👥 Integrantes
 
@@ -34,34 +22,28 @@ O sistema integra uma **API REST moderna** com interface web e utiliza **visão 
 | Léo Mota Lima | 557851 | 2TDSB2025 |
 | Lucas Leal das Chagas | 551124 | 2TDSB2025 |
 
----
-
 ## 📌 Justificativa da Arquitetura
 
-O MottuFlow .NET segue **arquitetura em camadas**, separando responsabilidades para facilitar **manutenção**, **escalabilidade** e **testes unitários**:
+Arquitetura em camadas:
 
 | Camada | Função |
 |--------|--------|
 | **Controller** | Recebe requisições HTTP e retorna respostas |
-| **Service** | Contém regras de negócio e processamento de dados |
-| **Repository** | Gerencia o acesso ao banco de dados |
+| **Service** | Contém regras de negócio e processamento |
+| **Repository** | Gerencia acesso ao banco de dados |
 | **Data/DbContext** | Conecta e gerencia operações no banco de dados |
 
-**DTOs (Data Transfer Objects)** são usados para padronizar dados entre camadas, garantindo que apenas informações necessárias sejam expostas ou recebidas pela API.
-
----
+**DTOs**: Padronizam dados entre camadas, garantindo segurança e consistência.
 
 ## 📌 Justificativa do Domínio
 
-As entidades refletem a operação da Mottu, startup especializada em locação e logística de motos:
+As entidades refletem a operação da startup Mottu:
 
 | Entidade | Função |
 |----------|-------|
 | **Funcionário** | Organiza e monitora motos no pátio |
 | **Moto** | Principal recurso para entregas e locação |
 | **Pátio** | Local físico para armazenamento e organização das motos |
-
----
 
 ## 🛠 Tecnologias
 
@@ -215,9 +197,46 @@ POST /api/registro-status -H "Content-Type: application/json" -d '{
 }'
 ```
 
-## ✅ Testes da API
+## ✅ Testes rápidos com cURL
+
+Use os comandos abaixo para confirmar que a API está ativa:
+
+### 🔹 1. Verificar se o Swagger está de pé
 ```bash
-curl http://localhost:5224/api/teste/ids
-curl http://localhost:5224/api/teste/nomes
+curl -i http://localhost:5224/swagger/index.html
 ```
-Confirma que a API está ativa e responde corretamente.
+
+### 🔹 2. Listar Funcionários (GET)
+```bash
+curl -i http://localhost:5224/api/funcionarios
+```
+
+### 🔹 3. Criar Funcionário (POST)
+```bash
+curl -X POST http://localhost:5224/api/funcionarios -H "Content-Type: application/json" -d '{
+  "nome": "Teste API",
+  "cpf": "12345678901",
+  "cargo": "Dev",
+  "telefone": "(11) 99999-9999",
+  "email": "teste@api.com",
+  "senha": "Senha123!"
+}'
+```
+
+### 🔹 4. Health Check (Ping)
+Se quiser, crie um endpoint de teste:
+```csharp
+[HttpGet("ping")]
+public IActionResult Ping()
+{
+    return Ok(new { status = "API rodando 🚀" });
+}
+```
+
+E teste com:
+```bash
+curl -i http://localhost:5224/api/health/ping
+```
+Resposta esperada:
+```json
+{ "status": "API rodando 🚀" }
