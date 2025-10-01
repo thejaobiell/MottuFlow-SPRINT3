@@ -136,10 +136,10 @@ DELETE /api/cameras/{id}
 
 ### 🏷️ ArUco Tags
 ```http
-GET /api/aruco-tags
-POST /api/aruco-tags
-PUT /api/aruco-tags/{id}
-DELETE /api/aruco-tags/{id}
+GET /api/arucotags
+POST /api/arucotags
+PUT /api/arucotags/{id}
+DELETE /api/arucotags/{id}
 ```
 **Exemplo POST/PUT**
 ```json
@@ -183,11 +183,13 @@ POST /api/registro-status
 ```json
 [
   {
-    "tipo_status": "Entrada",
-    "descricao": "Moto entrou no pátio",
-    "data_status": "2025-09-29T15:00:00",
-    "id_moto": 1,
-    "id_funcionario": 1
+  "TipoStatus": "Entrada",
+  "Descricao": "Moto entrou no pátio",
+  "DataStatus": "2025-09-30T12:00:00",
+  "IdPatio": 1,
+  "IdMoto": 1,
+  "IdFuncionario": 1,
+  "IdCamera": 1
   }
 ]
 ```
